@@ -1,63 +1,72 @@
 #include <stdio.h>
-#include <limits.h> // Untuk INT_MAX dan INT_MIN
+#include <stdlib.h> // Diperlukan untuk malloc dan free
+#include <limits.h> // Diperlukan untuk INT_MAX dan INT_MIN
 
 int main() {
-    int n;
-    // Membaca jumlah nilai (N)
-    if (scanf("%d", &n) != 1 || n <= 0) {
-        // Handle case for invalid N (non-positive)
-        // For simplicity as per the prompt's focus, we assume valid N based on example.
-        // In a real-world scenario, more robust error handling would be needed.
-        return 1; // Exit with error
-    }
-
-    int values[n]; // Menggunakan Variable Length Array (C99 standard)
-    int sum = 0;
-    int min_val = INT_MAX;
-    int max_val = INT_MIN;
-
-    // Membaca N nilai, menghitung jumlah, serta mencari nilai minimum dan maksimum
-    for (int i = 0; i < n; i++) {
-        int current_val;
-        if (scanf("%d", &current_val) != 1) {
-            // Handle case for invalid input
-            return 1; // Exit with error
-        }
-
-        // Batasan negatif: memastikan nilai tidak negatif
-        if (current_val < 0) {
-            // Dalam konteks prompt, kita diasumsikan input sudah valid
-            // Namun jika perlu penanganan, bisa ditambahkan di sini.
-            // Contoh: printf("Error: Nilai tidak boleh negatif.\n"); return 1;
-        }
-
-        values[i] = current_val;
-        sum += current_val;
-
-        if (current_val < min_val) {
-            min_val = current_val;
-        }
-        if (current_val > max_val) {
-            max_val = current_val;
-        }
-    }
-
-    double average = (double)sum / n;
-
+    int n, i;
+    int *scores; // Pointer untuk menyimpan nilai-nilai tugas
+    long long sum = 0;
+    double average;
     int count_above_average = 0;
-    for (int i = 0; i < n; i++) {
-        if (values[i] >= average) {
+    int min_score = INT_MAX; // Inisialisasi dengan nilai maksimum integer
+    int max_score = INT_MIN; // Inisialisasi dengan nilai minimum integer
+
+    // Membaca nilai n
+    scanf("%d", &n);
+
+    // Alokasi memori untuk menyimpan nilai-nilai
+    scores = (int *)malloc(n * sizeof(int));
+    if (scores == NULL) {
+        // Penanganan error jika alokasi memori gagal
+        return 1;
+    }
+
+    // Membaca n nilai tugas mahasiswa, menghitung total, serta mencari min dan max
+    for (i = 0; i < n; i++) {
+        scanf("%d", &scores[i]);
+        sum += scores[i];
+
+        if (scores[i] < min_score) {
+            min_score = scores[i];
+        }
+        if (scores[i] > max_score) {
+            max_score = scores[i];
+        }
+    }
+
+    // Menghitung rata-rata
+    if (n > 0) {
+        average = (double)sum / n;
+    } else {
+        average = 0.0; // Jika n adalah 0, rata-rata juga 0
+    }
+
+    // Menghitung banyaknya mahasiswa yang nilainya di atas atau sama dengan rata-rata
+    for (i = 0; i < n; i++) {
+        if (scores[i] >= average) {
             count_above_average++;
         }
     }
 
-    int range = max_val - min_val;
+    // Mencetak total nilai
+    printf("%lld\n", sum);
 
-    // Mencetak hasil sesuai format yang diminta
-    printf("%d\n", sum);
+    // Mencetak rata-rata dengan 2 digit presisi di belakang koma
     printf("%.2f\n", average);
+
+    // Mencetak banyaknya mahasiswa yang nilainya di atas atau sama dengan rata-rata
     printf("%d\n", count_above_average);
-    printf("%d\n", range);
+
+    // Mencetak rentang nilai (max_score - min_score)
+    // Periksa jika n > 0 untuk menghindari masalah jika tidak ada nilai
+    if (n > 0) {
+        printf("%d\n", max_score - min_score);
+    } else {
+        printf("0\n"); // Atau penanganan lain jika tidak ada nilai
+    }
+
+    // Membebaskan memori yang dialokasikan
+    free(scores);
 
     return 0;
 }

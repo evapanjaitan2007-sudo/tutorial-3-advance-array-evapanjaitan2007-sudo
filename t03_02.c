@@ -1,47 +1,55 @@
 #include <stdio.h>
+#include <stdlib.h> // Diperlukan untuk malloc
 
 int main() {
     int n, i;
-    int sum = 0;
-    float average;
+    int *scores; // Pointer untuk menyimpan nilai-nilai tugas
+    long long sum = 0;
+    double average;
     int count_above_average = 0;
 
-    // Read n
+    // Membaca nilai n
     scanf("%d", &n);
 
-    // Array to store student scores
-    int scores[n];
+    // Alokasi memori untuk menyimpan nilai-nilai
+    // Kita perlu menyimpan nilai untuk iterasi kedua (menghitung yang di atas rata-rata)
+    scores = (int *)malloc(n * sizeof(int));
+    if (scores == NULL) {
+        // Penanganan error jika alokasi memori gagal
+        return 1;
+    }
 
-    // Read n scores and calculate sum
+    // Membaca n nilai tugas mahasiswa dan menghitung totalnya
     for (i = 0; i < n; i++) {
-        int score;
-        scanf("%d", &score);
-        // Apply negative constraint: ensure score is not negative
-        if (score < 0) {
-            // Optional: handle error or make it 0. For this problem, we'll assume valid input within the constraint.
-            // If negative numbers must be entirely rejected, more complex error handling would be needed.
-            // For now, we proceed as if input is non-negative due to the problem context ("nilai mahasiswa").
-            scores[i] = 0; // Or handle error
-        } else {
-            scores[i] = score;
-        }
+        scanf("%d", &scores[i]);
         sum += scores[i];
     }
 
-    // Calculate average
-    average = (float)sum / n;
+    // Menghitung rata-rata
+    if (n > 0) {
+        average = (double)sum / n;
+    } else {
+        average = 0.0; // Jika n adalah 0, rata-rata juga 0
+    }
 
-    // Count students with scores above or equal to the average
+    // Menghitung banyaknya mahasiswa yang nilainya di atas atau sama dengan rata-rata
     for (i = 0; i < n; i++) {
         if (scores[i] >= average) {
             count_above_average++;
         }
     }
 
-    // Output results in the specified format
-    printf("%d\n", sum);
+    // Mencetak total nilai
+    printf("%lld\n", sum);
+
+    // Mencetak rata-rata dengan 2 digit presisi di belakang koma
     printf("%.2f\n", average);
+
+    // Mencetak banyaknya mahasiswa yang nilainya di atas atau sama dengan rata-rata
     printf("%d\n", count_above_average);
+
+    // Membebaskan memori yang dialokasikan
+    free(scores);
 
     return 0;
 }
